@@ -557,6 +557,11 @@ fn configure_cc(c: &mut cc::Build, target: &Target, c_root_dir: &Path, include_d
 
     let _ = c.include(c_root_dir.join("include"));
     let _ = c.include(include_dir);
+    if std::env::var("TARGET").unwrap().contains("sgx") {
+        let _ = c.define("SGX", None);
+        let sgx_sdk = std::env::var("SGX_SDK").unwrap();
+        let _ = c.include(PathBuf::new().join(sgx_sdk).join("include"));
+    }
     for f in cpp_flags(&compiler) {
         let _ = c.flag(f);
     }
